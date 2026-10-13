@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Will you go on a Bali tour with me?</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&display=swap" rel="stylesheet">
+<style>
+:root{--pink:#e0127a;--pink2:#ff7ab8;--bg1:#ffb3d9;--bg2:#ff6fb1;--card:#1a1a1f;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+*{box-sizing:border-box}
+html,body{height:100%;margin:0}
+body{background:linear-gradient(#ffd3ea,var(--bg1) 45%,var(--bg2));font-family:'Press Start 2P',ui-monospace,Menlo,monospace;color:var(--pink);overflow:hidden;display:flex;align-items:center;justify-content:center;text-align:center;image-rendering:pixelated}
+.cloud{position:fixed;background:#fff;opacity:.85;height:28px;width:110px;box-shadow:28px -18px 0 #fff,60px -10px 0 #fff;animation:drift 22s linear infinite}
+.c1{top:12%;left:-140px}.c2{top:28%;left:-140px;animation-duration:30s;animation-delay:-12s;transform:scale(.7)}.c3{top:70%;left:-140px;animation-duration:26s;animation-delay:-5s}
+@keyframes drift{to{transform:translateX(130vw)}}
+.heart{position:fixed;font-size:20px;animation:float 5s ease-in infinite;opacity:.8}
+@keyframes float{from{transform:translateY(105vh)}to{transform:translateY(-10vh)}}
+main{position:relative;z-index:2;width:min(92vw,520px);padding:16px}
+.frame{width:150px;height:150px;margin:0 auto 28px;background:var(--card);border:6px solid var(--pink);outline:4px solid #fff;box-shadow:0 0 0 8px var(--pink2);display:flex;align-items:center;justify-content:center;font-size:84px}
+#cat{display:inline-block;animation:bob 1.6s steps(2) infinite}
+@keyframes bob{50%{transform:translateY(-6px)}}
+h1{font-size:clamp(18px,6vw,28px);line-height:1.6;margin:0 0 28px;text-shadow:3px 3px 0 #fff}
+.btns{display:flex;gap:18px;justify-content:center;align-items:center;min-height:90px}
+button{font-family:inherit;border:0;cursor:pointer;padding:14px 18px;font-size:16px;border-radius:6px}
+#yes{background:var(--pink);color:#fff;box-shadow:0 5px 0 #8a0950,inset 0 0 0 3px #ff5aa8;transition:transform .15s}
+#yes:active{transform:translateY(4px)}
+#no{background:#fff;color:var(--pink);box-shadow:0 5px 0 var(--pink2),inset 0 0 0 3px var(--pink2);transition:left .15s,top .15s}
+#msg{margin-top:22px;font-size:11px;line-height:1.8;min-height:40px;color:#9c0c5b}
+#win{display:none}
+.win h1{font-size:clamp(20px,7vw,32px)}
+</style>
+</head>
+<body>
+<div class="cloud c1"></div><div class="cloud c2"></div><div class="cloud c3"></div>
+<main id="ask">
+  <div class="frame"><span id="cat">🥺</span></div>
+  <h1 id="q">Will you go on a Bali tour with me?</h1>
+  <div class="btns"><button id="yes">YES</button><button id="no">No</button></div>
+  <div id="msg"></div>
+</main>
+<main id="win" class="win">
+  <div class="frame"><span id="cat2">😻</span></div>
+  <h1 id="wt">YAYYY!!</h1>
+  <div id="msg2" style="font-size:11px;line-height:1.8;color:#9c0c5b">Bali here we come 🌴 Screenshot this and send it back to me 💌</div>
+</main>
+<script>
+(function(){
+  var name=(new URLSearchParams(location.search).get('to')||'').slice(0,30);
+  if(name){document.getElementById('q').textContent=name+', will you go on a Bali tour with me?';document.getElementById('wt').textContent='YAYYY '+name+'!!';}
+  var yes=document.getElementById('yes'),no=document.getElementById('no'),msg=document.getElementById('msg'),cat=document.getElementById('cat');
+  var tries=0,scale=1;
+  var lines=['Nope, try again 😼','Are you sure?? 🥺','The button is shy 🙈','You can\'t catch it!','Just press YES already 💖','Last chance...','OK the No button gave up 😭'];
+  var faces=['🥺','😿','😭','🙀','😾','😿','😭'];
+  function dodge(e){
+    if(e){e.preventDefault();}
+    tries++;
+    var w=window.innerWidth,h=window.innerHeight,r=no.getBoundingClientRect();
+    no.style.position='fixed';
+    var x=Math.random()*(w-r.width-20)+10,y=Math.random()*(h-r.height-20)+10;
+    no.style.left=x+'px';no.style.top=y+'px';
+    scale=Math.min(scale+0.25,3);
+    yes.style.transform='scale('+scale+')';
+    yes.style.margin=(scale*8)+'px';
+    msg.textContent=lines[Math.min(tries-1,lines.length-1)];
+    cat.textContent=faces[Math.min(tries-1,faces.length-1)];
+    if(tries>=7){no.style.display='none';}
+  }
+  no.addEventListener('mouseenter',dodge);
+  no.addEventListener('touchstart',dodge,{passive:false});
+  no.addEventListener('click',dodge);
+  yes.addEventListener('click',function(){
+    document.getElementById('ask').style.display='none';
+    no.style.display='none';
+    document.getElementById('win').style.display='block';
+    for(var i=0;i<30;i++){
+      var s=document.createElement('div');s.className='heart';
+      s.textContent=['💖','💗','💕','✨'][i%4];
+      s.style.left=Math.random()*100+'vw';
+      s.style.animationDuration=(3+Math.random()*4)+'s';
+      s.style.animationDelay=(-Math.random()*5)+'s';
+      document.body.appendChild(s);
+    }
+  });
+})();
+</script>
+</body>
+</html>
